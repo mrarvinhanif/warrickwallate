@@ -17,9 +17,9 @@ declare module 'jspdf' {
 
 const Logo = ({ className = "" }: { className?: string }) => (
   <div className={`brand-container ${className}`}>
-    <h1 className="text-4xl md:text-5xl brand-text">WARRICK<span className="brand-dot">.</span></h1>
+    <h1 className="text-3xl md:text-4xl brand-text">WARRICK<span className="brand-dot">.</span></h1>
     <div className="brand-underline"></div>
-    <div className="powered-tag">POWERED BY ARVIN</div>
+    <div className="powered-tag text-[7px]">POWERED BY ARVIN</div>
   </div>
 );
 
@@ -393,8 +393,8 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen py-6 px-4 md:px-10 lg:px-20">
-      <header className="max-w-[1200px] mx-auto mb-8 flex flex-col md:flex-row md:justify-between items-center gap-6 text-center md:text-left animate-ios">
+    <div className="w-full min-h-screen py-4 px-4 md:px-8 lg:px-12">
+      <header className="max-w-[1100px] mx-auto mb-6 flex flex-col md:flex-row md:justify-between items-center gap-6 text-center md:text-left animate-ios">
         <div className="flex items-center gap-4">
           <Logo className="header-logo" />
         </div>
@@ -406,20 +406,20 @@ const App: React.FC = () => {
           <button onClick={() => {localStorage.removeItem('W_SESSION'); setView('signin'); setCurrentUser(null);}} className="px-5 py-2.5 bg-white rounded-2xl text-rose-500 font-black text-[10px] uppercase tracking-widest border border-rose-100 shadow-sm">Logout</button>
         </div>
       </header>
-      <main className="max-w-[1200px] mx-auto space-y-10 pb-12">
+      <main className="max-w-[1100px] mx-auto space-y-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard label="Net Balance" type="balance" currencySymbol="৳" transactions={transactions} style={{ animationDelay: '0.1s' }} />
           <StatCard label="Total Income" type="income" currencySymbol="৳" transactions={transactions} style={{ animationDelay: '0.2s' }} />
           <StatCard label="Total Expenses" type="expense" currencySymbol="৳" transactions={transactions} style={{ animationDelay: '0.3s' }} />
         </div>
         
-        <div className={`ios-widget p-6 md:p-10 border border-white/40 shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'ios-glass-red' : 'ios-glass-green'}`} style={{ animationDelay: '0.35s' }}>
-          <div className="flex flex-col md:flex-row md:justify-between items-center gap-4 mb-8">
+        <div className={`ios-widget p-5 md:p-8 border border-white/40 shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'ios-glass-red' : 'ios-glass-green'}`} style={{ animationDelay: '0.35s' }}>
+          <div className="flex flex-col md:flex-row md:justify-between items-center gap-4 mb-6">
             <div className="flex flex-col">
-              <h3 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent uppercase tracking-[0.2em] leading-none">ADD NEW</h3>
-              <div className="h-1 w-12 bg-gradient-to-r from-slate-800/20 to-transparent rounded-full mt-2"></div>
+              <h3 className="text-xl md:text-2xl font-black bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent uppercase tracking-[0.2em] leading-none">ADD NEW</h3>
+              <div className="h-1 w-10 bg-gradient-to-r from-slate-800/20 to-transparent rounded-full mt-2"></div>
             </div>
-            <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white relative w-64 h-12 overflow-hidden">
+            <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white relative w-56 h-10 overflow-hidden">
               <motion.div 
                 className="absolute top-1 bottom-1 left-1 bg-white rounded-xl shadow-md"
                 initial={false}

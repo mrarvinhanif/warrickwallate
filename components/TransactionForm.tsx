@@ -30,10 +30,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, initialType })
     setAmount('');
   };
 
-  const inputClass = "w-full px-6 py-4 rounded-2xl bg-white border border-slate-100 outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold text-slate-800 placeholder:text-slate-300";
+  const inputClass = "w-full px-4 py-3 rounded-xl bg-white border border-slate-100 outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold text-slate-800 placeholder:text-slate-300 text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3">
       <input
         required
         type="text"
@@ -60,7 +60,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, initialType })
           <option key={m} value={m}>{m}</option>
         ))}
       </select>
-      <button type="submit" className="bg-white text-blue-600 font-black py-4 rounded-2xl hover:bg-slate-50 transition-all text-sm ios-button shadow-lg shadow-blue-500/5 border border-blue-100 uppercase tracking-widest">
+      <button type="submit" className="bg-white text-blue-600 font-black py-3 rounded-xl hover:bg-slate-50 transition-all text-xs ios-button shadow-lg shadow-blue-500/5 border border-blue-100 uppercase tracking-widest">
         Sync Entry
       </button>
     </form>

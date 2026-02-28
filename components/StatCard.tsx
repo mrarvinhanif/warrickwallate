@@ -51,10 +51,10 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
   }, [type, methodTotals, transactions, selectedMethod]);
 
   return (
-    <div style={style} className={`ios-widget p-6 md:p-7 ${getGlassClass()} ${getStyle()} flex flex-col justify-between h-44 md:h-48 shadow-2xl animate-ios relative overflow-hidden`}>
+    <div style={style} className={`ios-widget p-4 md:p-5 ${getGlassClass()} ${getStyle()} flex flex-col justify-between h-36 md:h-40 shadow-2xl animate-ios relative overflow-hidden`}>
       <div className="flex flex-col gap-1">
         <div className="flex justify-between items-center w-full">
-          <p className={`text-[10px] md:text-[11px] font-black uppercase tracking-widest ${type === 'balance' ? 'text-blue-500' : (type === 'income' ? 'text-emerald-500' : 'text-rose-500')}`}>{label}</p>
+          <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wider whitespace-nowrap ${type === 'balance' ? 'text-blue-500' : (type === 'income' ? 'text-emerald-500' : 'text-rose-500')}`}>{label}</p>
           <div className={`flex gap-1 p-1 ${type === 'balance' ? 'bg-blue-300/40' : 'bg-white/40'} rounded-xl border ${type === 'balance' ? 'border-blue-300/60' : 'border-white/60'} overflow-x-auto scrollbar-hide`}>
             {[PaymentMethod.CASH, PaymentMethod.BKASH, PaymentMethod.NAGAD, PaymentMethod.BANK].map(m => (
               <button 
@@ -78,8 +78,8 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
           </div>
         </div>
       </div>
-      <h2 className={`text-2xl md:text-3xl font-extrabold tabular-nums tracking-tighter leading-none transition-all duration-500 ${!isRevealed ? 'blur-md opacity-20' : 'opacity-100'}`}>
-        <span className="text-lg md:text-xl mr-1 font-medium opacity-70">{currencySymbol}</span>
+      <h2 className={`text-xl md:text-2xl font-extrabold tabular-nums tracking-tighter leading-none transition-all duration-500 ${!isRevealed ? 'blur-md opacity-20' : 'opacity-100'}`}>
+        <span className="text-base md:text-lg mr-1 font-medium opacity-70">{currencySymbol}</span>
         {displayAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
       </h2>
     </div>
