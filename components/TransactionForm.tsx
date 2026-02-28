@@ -60,7 +60,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, initialType })
           <option key={m} value={m}>{m}</option>
         ))}
       </select>
-      <button type="submit" className="bg-blue-600 text-white font-black py-4 rounded-2xl hover:bg-blue-700 transition-all text-sm ios-button shadow-lg shadow-blue-500/20 uppercase tracking-widest">
+      <button type="submit" className="bg-white text-blue-600 font-black py-4 rounded-2xl hover:bg-slate-50 transition-all text-sm ios-button shadow-lg shadow-blue-500/5 border border-blue-100 uppercase tracking-widest">
         Sync Entry
       </button>
     </form>

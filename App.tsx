@@ -42,6 +42,7 @@ const App: React.FC = () => {
   const [entryType, setEntryType] = useState<TransactionType>(TransactionType.EXPENSE);
   const [isLoading, setIsLoading] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState<Partial<UserProfile>>({});
@@ -181,6 +182,14 @@ const App: React.FC = () => {
     const updated = [newTx, ...transactions];
     setTransactions(updated);
     await CloudSync.syncTransactions(currentUser.username || currentUser.email, updated);
+  };
+
+  const handleUpdateTransaction = async (updatedTx: Transaction) => {
+    if (!currentUser) return;
+    const updated = transactions.map(tx => tx.id === updatedTx.id ? updatedTx : tx);
+    setTransactions(updated);
+    await CloudSync.syncTransactions(currentUser.username || currentUser.email, updated);
+    setEditingTransaction(null);
   };
 
   const exportToPDF = () => {
@@ -430,8 +439,75 @@ const App: React.FC = () => {
               ))}
             </div>
           </div>
-          <TransactionList transactions={filteredTxs} onDelete={handleDelete} currencySymbol="৳" role={currentUser?.role || UserRole.USER} />
+          <TransactionList 
+            transactions={filteredTxs} 
+            onDelete={handleDelete} 
+            onEdit={(tx) => setEditingTransaction(tx)}
+            currencySymbol="৳" 
+            role={currentUser?.role || UserRole.USER} 
+          />
         </div>
+
+        {editingTransaction && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-ios">
+            <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100">
+              <div className="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-widest">Edit Entry</h3>
+                <button onClick={() => setEditingTransaction(null)} className="p-2 text-slate-400 hover:text-slate-600">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <div className="p-8 space-y-6">
+                <div className="space-y-1">
+                  <label className="smart-label">Description</label>
+                  <input 
+                    className="smart-input" 
+                    value={editingTransaction.description} 
+                    onChange={e => setEditingTransaction({...editingTransaction, description: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="smart-label">Amount</label>
+                  <input 
+                    type="number"
+                    className="smart-input" 
+                    value={editingTransaction.amount} 
+                    onChange={e => setEditingTransaction({...editingTransaction, amount: parseFloat(e.target.value) || 0})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="smart-label">Type</label>
+                    <select 
+                      className="smart-input"
+                      value={editingTransaction.type}
+                      onChange={e => setEditingTransaction({...editingTransaction, type: e.target.value as TransactionType})}
+                    >
+                      <option value={TransactionType.INCOME}>Income</option>
+                      <option value={TransactionType.EXPENSE}>Expense</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="smart-label">Method</label>
+                    <select 
+                      className="smart-input"
+                      value={editingTransaction.method}
+                      onChange={e => setEditingTransaction({...editingTransaction, method: e.target.value as PaymentMethod})}
+                    >
+                      {Object.values(PaymentMethod).map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleUpdateTransaction(editingTransaction)}
+                  className="w-full bg-blue-600 text-white font-black py-4 rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 uppercase tracking-widest mt-4"
+                >
+                  Update Entry
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

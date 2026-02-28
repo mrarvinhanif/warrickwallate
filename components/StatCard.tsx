@@ -72,7 +72,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
             <div className="balance-slider-text absolute w-full text-center text-[8px] font-extrabold uppercase tracking-widest top-1/2 -translate-y-1/2 pl-[22px] pointer-events-none transition-opacity opacity-60">
               {isRevealed ? 'REVEALED' : `TAP TO ${selectedMethod}`}
             </div>
-            <div className={`balance-slider-thumb absolute top-[2px] left-[2px] h-[22px] w-[22px] rounded-full flex items-center justify-center text-white text-[11px] shadow-md transition-transform duration-500 ease-out ${isRevealed ? 'translate-x-[84px]' : 'translate-x-0'} ${type === 'balance' ? 'bg-blue-600' : type === 'income' ? 'bg-emerald-500' : 'bg-rose-500'}`}>
+            <div className={`balance-slider-thumb absolute top-[2px] left-[2px] h-[22px] w-[22px] rounded-full flex items-center justify-center text-white text-[11px] shadow-md transition-transform duration-1000 ease-in-out ${isRevealed ? 'translate-x-[80px]' : 'translate-x-0'} ${type === 'balance' ? 'bg-blue-600' : type === 'income' ? 'bg-emerald-500' : 'bg-rose-500'}`}>
               ৳
             </div>
           </div>

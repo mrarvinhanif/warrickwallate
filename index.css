@@ -435,7 +435,6 @@ body {
   position: absolute;
   top: 2px;
   left: 2px;
-  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,7 +448,6 @@ body {
 }
 
 .type-balance.active .balance-slider-thumb {
-  transform: translateX(84px);
   background: #10b981;
 }
 
@@ -462,7 +460,6 @@ body {
 }
 
 .type-income.active .balance-slider-thumb {
-  transform: translateX(84px);
 }
 
 .type-income .balance-slider-text {
@@ -474,7 +471,6 @@ body {
 }
 
 .type-expense.active .balance-slider-thumb {
-  transform: translateX(84px);
 }
 
 .type-expense .balance-slider-text {
