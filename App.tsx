@@ -44,6 +44,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState<Partial<UserProfile>>({});
@@ -77,6 +78,10 @@ const App: React.FC = () => {
       avatar: user.avatar || '👤',
       bio: user.bio || 'A Finance Enthusiast focused on smart money management.'
     });
+    if (user.role === UserRole.ADMIN) {
+      const users = await CloudSync.getAllUsers();
+      setAllUsers(users);
+    }
     setView('dashboard');
     setIsLoading(false);
   };
@@ -470,6 +475,69 @@ const App: React.FC = () => {
             role={currentUser?.role || UserRole.USER} 
           />
         </div>
+
+        {currentUser?.role === UserRole.ADMIN && (
+          <div className="ios-glass rounded-[2rem] border border-white shadow-2xl overflow-hidden mb-12 animate-ios" style={{ animationDelay: '0.5s' }}>
+            <div className="p-6 md:p-8 border-b border-white/40 bg-white/30 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">User Management</h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Registered Accounts Database</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-black bg-white/80 border border-white px-3 py-1 rounded-full uppercase shadow-sm">{allUsers.length} Users</span>
+                <button onClick={async () => setAllUsers(await CloudSync.getAllUsers())} className="p-2 bg-white/80 border border-white rounded-full shadow-sm hover:bg-white transition-all active:scale-90">
+                  <svg className="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </button>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/50">
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">User</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Contact</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Role</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Bio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allUsers.map((u, idx) => (
+                    <tr key={u.email} className={`hover:bg-slate-50/50 transition-colors ${idx !== allUsers.length - 1 ? 'border-b border-slate-50' : ''}`}>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg overflow-hidden border border-white shadow-sm">
+                            {u.avatar?.startsWith('data:image') ? <img src={u.avatar} alt="" className="w-full h-full object-cover" /> : (u.avatar || '👤')}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-800 text-sm">{u.name}</p>
+                            <p className="text-[10px] text-slate-400 font-medium">@{u.username}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs font-bold text-slate-700">{u.email}</p>
+                          <button onClick={() => navigator.clipboard.writeText(u.email)} className="p-1.5 text-slate-300 hover:text-blue-500 transition-colors" title="Copy Email">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-medium">{u.mobile}</p>
+                      </td>
+                      <td className="p-4">
+                        <span className={`text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-tighter ${u.role === UserRole.ADMIN ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                          {u.role}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <p className="text-[10px] text-slate-400 line-clamp-1 max-w-[200px]">{u.bio || 'No bio provided'}</p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {editingTransaction && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-ios">
