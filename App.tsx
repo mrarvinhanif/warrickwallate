@@ -415,11 +415,9 @@ const App: React.FC = () => {
         
         <div className={`ios-widget p-6 md:p-10 border border-white/40 shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'ios-glass-red' : 'ios-glass-green'}`} style={{ animationDelay: '0.35s' }}>
           <div className="flex flex-col md:flex-row md:justify-between items-center gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/50 rounded-xl flex items-center justify-center shadow-sm border border-white/60">
-                <svg className="w-5 h-5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"/></svg>
-              </div>
-              <h3 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">ADD NEW</h3>
+            <div className="flex flex-col">
+              <h3 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent uppercase tracking-[0.2em] leading-none">ADD NEW</h3>
+              <div className="h-1 w-12 bg-gradient-to-r from-slate-800/20 to-transparent rounded-full mt-2"></div>
             </div>
             <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white relative w-64 h-12 overflow-hidden">
               <motion.div 
