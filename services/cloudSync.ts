@@ -100,5 +100,39 @@ export const CloudSync = {
       console.error("Transaction Delete Failed:", error);
       throw error;
     }
+  },
+
+  async getAds(): Promise<import('../types').Advertisement[]> {
+    const { data, error } = await supabase.from('advertisements').select('*').order('createdAt', { ascending: false });
+    if (error) {
+      console.error("Fetch Ads Failed:", error);
+      return JSON.parse(localStorage.getItem('GLOBAL_WARRICK_ADS') || '[]');
+    }
+    return data || [];
+  },
+
+  async saveAd(ad: import('../types').Advertisement) {
+    const { error } = await supabase.from('advertisements').upsert(ad);
+    if (error) {
+      console.error("Save Ad Failed:", error);
+      // Fallback
+      const ads = JSON.parse(localStorage.getItem('GLOBAL_WARRICK_ADS') || '[]');
+      const idx = ads.findIndex((a: any) => a.id === ad.id);
+      if (idx > -1) ads[idx] = ad;
+      else ads.push(ad);
+      localStorage.setItem('GLOBAL_WARRICK_ADS', JSON.stringify(ads));
+      return ad;
+    }
+    return ad;
+  },
+
+  async deleteAd(id: string) {
+    const { error } = await supabase.from('advertisements').delete().eq('id', id);
+    if (error) {
+      console.error("Delete Ad Failed:", error);
+      const ads = JSON.parse(localStorage.getItem('GLOBAL_WARRICK_ADS') || '[]');
+      const filtered = ads.filter((a: any) => a.id !== id);
+      localStorage.setItem('GLOBAL_WARRICK_ADS', JSON.stringify(filtered));
+    }
   }
 };

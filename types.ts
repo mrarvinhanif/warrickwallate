@@ -43,3 +43,12 @@ export interface DashboardStats {
   totalIncome: number;
   totalExpenses: number;
 }
+
+export interface Advertisement {
+  id: string;
+  title: string;
+  link: string;
+  imageUrl: string;
+  active: boolean;
+  createdAt: string;
+}

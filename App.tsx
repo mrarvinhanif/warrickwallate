@@ -23,16 +23,55 @@ const Logo = ({ className = "" }: { className?: string }) => (
   </div>
 );
 
-const AdBanner = () => (
-  <a href="https://www.cellexbd.online" target="_blank" rel="noopener noreferrer" className="ad-banner">
-    <span className="ad-label">Advertisement</span>
-    <div className="ad-content-text">
-      <img src="https://api.dicebear.com/7.x/shapes/svg?seed=cellex" alt="Cellex" className="ad-image" />
-      <div className="ad-dot-pulse"></div>
-      PREMIUM CLOUD SYNC ACTIVE
-    </div>
-  </a>
-);
+const AdBanner = ({ ads }: { ads: import('./types').Advertisement[] }) => {
+  const activeAds = ads.filter(ad => ad.active);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (activeAds.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % activeAds.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeAds.length]);
+
+  if (activeAds.length === 0) {
+    return (
+      <a href="https://www.cellexbd.online" target="_blank" rel="noopener noreferrer" className="ad-banner">
+        <span className="ad-label">Advertisement</span>
+        <div className="ad-content-text">
+          <img src="https://api.dicebear.com/7.x/shapes/svg?seed=cellex" alt="Cellex" className="ad-image" />
+          <div className="ad-dot-pulse"></div>
+          PREMIUM CLOUD SYNC ACTIVE
+        </div>
+      </a>
+    );
+  }
+
+  const currentAd = activeAds[currentIndex];
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.a 
+        key={currentAd.id}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        href={currentAd.link} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="ad-banner"
+      >
+        <span className="ad-label">Advertisement</span>
+        <div className="ad-content-text">
+          <img src={currentAd.imageUrl} alt={currentAd.title} className="ad-image rounded-md" referrerPolicy="no-referrer" />
+          <div className="ad-dot-pulse"></div>
+          {currentAd.title}
+        </div>
+      </motion.a>
+    </AnimatePresence>
+  );
+};
 
 const App: React.FC = () => {
   const [view, setView] = useState<'signin' | 'signup' | 'admin' | 'dashboard'>('signin');
@@ -45,6 +84,8 @@ const App: React.FC = () => {
   const [historySearch, setHistorySearch] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
+  const [ads, setAds] = useState<import('./types').Advertisement[]>([]);
+  const [newAd, setNewAd] = useState({ title: '', link: '', imageUrl: '' });
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState<Partial<UserProfile>>({});
@@ -60,6 +101,11 @@ const App: React.FC = () => {
         localStorage.removeItem('W_SESSION');
       }
     }
+    const fetchInitialAds = async () => {
+      const initialAds = await CloudSync.getAds();
+      setAds(initialAds);
+    };
+    fetchInitialAds();
   }, []);
 
   const loadUserData = async (user: UserProfile) => {
@@ -84,6 +130,33 @@ const App: React.FC = () => {
     }
     setView('dashboard');
     setIsLoading(false);
+  };
+
+  const handleAddAd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const ad: import('./types').Advertisement = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: newAd.title,
+      link: newAd.link,
+      imageUrl: newAd.imageUrl,
+      active: true,
+      createdAt: new Date().toISOString()
+    };
+    await CloudSync.saveAd(ad);
+    setAds([ad, ...ads]);
+    setNewAd({ title: '', link: '', imageUrl: '' });
+  };
+
+  const toggleAdStatus = async (ad: import('./types').Advertisement) => {
+    const updatedAd = { ...ad, active: !ad.active };
+    await CloudSync.saveAd(updatedAd);
+    setAds(ads.map(a => a.id === ad.id ? updatedAd : a));
+  };
+
+  const handleDeleteAd = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this ad?')) return;
+    await CloudSync.deleteAd(id);
+    setAds(ads.filter(a => a.id !== id));
   };
 
   const handleSignin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -403,7 +476,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
           <Logo className="header-logo" />
         </div>
-        <AdBanner />
+        <AdBanner ads={ads} />
         <div className="flex items-center gap-3">
           <div className="avatar-circle-display" onClick={() => setShowProfileModal(true)}>
             {currentUser?.avatar?.startsWith('data:image') ? <img src={currentUser.avatar} alt="Profile" /> : (currentUser?.avatar || '👤')}
@@ -533,6 +606,92 @@ const App: React.FC = () => {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {currentUser?.role === UserRole.ADMIN && (
+          <div className="ios-glass rounded-[2rem] border border-white shadow-2xl overflow-hidden mb-12 animate-ios" style={{ animationDelay: '0.6s' }}>
+            <div className="p-6 md:p-8 border-b border-white/40 bg-white/30">
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">Advertisement Management</h3>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Control your promotional banners</p>
+            </div>
+            
+            <div className="p-6 md:p-8 bg-slate-50/30 border-b border-slate-100">
+              <form onSubmit={handleAddAd} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input 
+                  required 
+                  placeholder="Ad Title" 
+                  className="smart-input !py-3 !text-xs" 
+                  value={newAd.title} 
+                  onChange={e => setNewAd({...newAd, title: e.target.value})} 
+                />
+                <input 
+                  required 
+                  placeholder="Ad Link (URL)" 
+                  className="smart-input !py-3 !text-xs" 
+                  value={newAd.link} 
+                  onChange={e => setNewAd({...newAd, link: e.target.value})} 
+                />
+                <input 
+                  required 
+                  placeholder="Image URL" 
+                  className="smart-input !py-3 !text-xs" 
+                  value={newAd.imageUrl} 
+                  onChange={e => setNewAd({...newAd, imageUrl: e.target.value})} 
+                />
+                <button type="submit" className="bg-blue-600 text-white font-black py-3 rounded-xl hover:bg-blue-700 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20">
+                  Deploy Ad
+                </button>
+              </form>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/50">
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Preview</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Details</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Status</th>
+                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ads.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="p-12 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest">No Advertisements Configured</td>
+                    </tr>
+                  ) : (
+                    ads.map((ad, idx) => (
+                      <tr key={ad.id} className={`hover:bg-slate-50/50 transition-colors ${idx !== ads.length - 1 ? 'border-b border-slate-50' : ''}`}>
+                        <td className="p-4">
+                          <img src={ad.imageUrl} alt="" className="w-16 h-10 object-cover rounded-lg border border-slate-200 shadow-sm" referrerPolicy="no-referrer" />
+                        </td>
+                        <td className="p-4">
+                          <p className="font-bold text-slate-800 text-sm">{ad.title}</p>
+                          <a href={ad.link} target="_blank" rel="noreferrer" className="text-[10px] text-blue-500 hover:underline truncate max-w-[200px] block">{ad.link}</a>
+                        </td>
+                        <td className="p-4">
+                          <button 
+                            onClick={() => toggleAdStatus(ad)}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all ${ad.active ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}
+                          >
+                            {ad.active ? 'Active' : 'Paused'}
+                          </button>
+                        </td>
+                        <td className="p-4 text-right">
+                          <button 
+                            onClick={() => handleDeleteAd(ad.id)}
+                            className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
