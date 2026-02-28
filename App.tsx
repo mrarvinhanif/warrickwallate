@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Transaction, TransactionType, UserRole, PaymentMethod, UserProfile } from './types';
 import { CloudSync } from './services/cloudSync';
 import StatCard from './components/StatCard';
@@ -414,10 +415,34 @@ const App: React.FC = () => {
         
         <div className={`ios-widget p-6 md:p-10 border border-white/40 shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'ios-glass-red' : 'ios-glass-green'}`} style={{ animationDelay: '0.35s' }}>
           <div className="flex flex-col md:flex-row md:justify-between items-center gap-4 mb-8">
-            <h3 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">New Entry</h3>
-            <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white">
-              <button onClick={() => setEntryType(TransactionType.EXPENSE)} className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${entryType === TransactionType.EXPENSE ? 'bg-white text-rose-600 shadow-md' : 'text-slate-400'}`}>Expense</button>
-              <button onClick={() => setEntryType(TransactionType.INCOME)} className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${entryType === TransactionType.INCOME ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-400'}`}>Income</button>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/50 rounded-xl flex items-center justify-center shadow-sm border border-white/60">
+                <svg className="w-5 h-5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">ADD NEW</h3>
+            </div>
+            <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white relative w-64 h-12 overflow-hidden">
+              <motion.div 
+                className="absolute top-1 bottom-1 left-1 bg-white rounded-xl shadow-md"
+                initial={false}
+                animate={{ 
+                  x: entryType === TransactionType.EXPENSE ? 0 : '100%',
+                  width: 'calc(50% - 4px)'
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+              />
+              <button 
+                onClick={() => setEntryType(TransactionType.EXPENSE)} 
+                className={`relative z-10 flex-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${entryType === TransactionType.EXPENSE ? 'text-rose-600' : 'text-slate-400'}`}
+              >
+                Expense
+              </button>
+              <button 
+                onClick={() => setEntryType(TransactionType.INCOME)} 
+                className={`relative z-10 flex-1 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${entryType === TransactionType.INCOME ? 'text-emerald-600' : 'text-slate-400'}`}
+              >
+                Income
+              </button>
             </div>
           </div>
           <TransactionForm onAdd={handleAddTransaction} initialType={entryType} />

@@ -31,7 +31,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, onDelet
         ) : (
           <div className="space-y-2 mt-4">
             {transactions.map((t) => (
-              <div key={t.id} className={`group flex items-center justify-between p-5 rounded-3xl border transition-all duration-300 ios-button ${t.type === TransactionType.INCOME ? 'bg-green-100/60 border-green-200 hover:bg-green-200/80' : 'bg-red-100/60 border-red-200 hover:bg-red-200/80'}`}>
+              <div key={t.id} className={`group flex items-center justify-between p-5 rounded-3xl border transition-all duration-300 ${t.type === TransactionType.INCOME ? 'bg-green-100/60 border-green-200 hover:bg-green-200/80' : 'bg-red-100/60 border-red-200 hover:bg-red-200/80'}`}>
                 <div className="flex items-center gap-5">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${t.type === TransactionType.INCOME ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                     {t.type === TransactionType.INCOME ? 
@@ -55,25 +55,33 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, onDelet
                     </p>
                   </div>
                   
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                  <div className="flex items-center gap-2 relative z-20">
                     <button 
-                      onClick={() => onEdit(t)} 
-                      className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onEdit(t);
+                      }} 
+                      className="p-3 text-blue-600 hover:text-blue-800 hover:bg-white/80 rounded-2xl transition-all bg-white/40 shadow-sm border border-white/60"
+                      title="Edit"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                       </svg>
                     </button>
-                    {(role === UserRole.ADMIN || true) && (
-                      <button 
-                        onClick={() => onDelete(t.id)} 
-                        className="p-2 text-rose-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1-1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    )}
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onDelete(t.id);
+                      }} 
+                      className="p-3 text-rose-600 hover:text-rose-800 hover:bg-white/80 rounded-2xl transition-all bg-white/40 shadow-sm border border-white/60"
+                      title="Delete"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1-1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
