@@ -403,7 +403,7 @@ const App: React.FC = () => {
           <StatCard label="Total Expenses" type="expense" currencySymbol="৳" transactions={transactions} style={{ animationDelay: '0.3s' }} />
         </div>
         
-        <div className={`ios-glass p-6 md:p-10 rounded-[2rem] border border-white shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'bg-red-100/60' : 'bg-green-100/60'}`} style={{ animationDelay: '0.35s' }}>
+        <div className={`ios-widget p-6 md:p-10 border border-white/40 shadow-2xl transition-all duration-500 animate-ios ${entryType === TransactionType.EXPENSE ? 'ios-glass-red' : 'ios-glass-green'}`} style={{ animationDelay: '0.35s' }}>
           <div className="flex flex-col md:flex-row md:justify-between items-center gap-4 mb-8">
             <h3 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-widest">New Entry</h3>
             <div className="p-1 bg-slate-200/50 rounded-2xl flex border border-white">

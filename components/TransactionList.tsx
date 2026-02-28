@@ -11,15 +11,7 @@ interface TransactionListProps {
 const TransactionList: React.FC<TransactionListProps> = ({ transactions, onDelete, currencySymbol, role }) => {
   return (
     <div className="w-full">
-      <div className="p-8 border-b border-white/40 flex justify-between items-center bg-white/30">
-        <div>
-          <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">Recent Activity</h3>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Live Transaction Stream</p>
-        </div>
-        <span className="text-[10px] font-black bg-white/80 border border-white px-3 py-1 rounded-full uppercase shadow-sm">{transactions.length} Logs</span>
-      </div>
-      
-      <div className="max-h-[500px] overflow-y-auto px-4 pb-4 scrollbar-hide">
+      <div className="max-h-[600px] overflow-y-auto scrollbar-hide">
         {transactions.length === 0 ? (
           <div className="py-20 text-center">
             <div className="w-16 h-16 bg-slate-50 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-200">

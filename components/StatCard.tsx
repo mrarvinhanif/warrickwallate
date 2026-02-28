@@ -13,11 +13,20 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
   const [isRevealed, setIsRevealed] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(PaymentMethod.CASH);
 
+  const getGlassClass = () => {
+    switch (type) {
+      case 'income': return 'ios-glass-green';
+      case 'expense': return 'ios-glass-red';
+      case 'balance': return 'ios-glass-blue';
+      default: return 'ios-glass';
+    }
+  };
+
   const getStyle = () => {
     switch (type) {
-      case 'income': return 'bg-green-100/60 text-emerald-600 border border-white';
-      case 'expense': return 'bg-red-100/60 text-rose-600 border border-white';
-      case 'balance': return 'bg-blue-100/60 text-blue-700 border border-white';
+      case 'income': return 'text-emerald-800 border border-white/40';
+      case 'expense': return 'text-rose-800 border border-white/40';
+      case 'balance': return 'text-blue-900 border border-white/40';
       default: return 'bg-white text-slate-800 border border-white';
     }
   };
@@ -42,16 +51,16 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
   }, [type, methodTotals, transactions, selectedMethod]);
 
   return (
-    <div style={style} className={`ios-widget p-6 md:p-7 ios-glass ${getStyle()} flex flex-col justify-between h-44 md:h-48 shadow-2xl animate-ios relative overflow-hidden`}>
+    <div style={style} className={`ios-widget p-6 md:p-7 ${getGlassClass()} ${getStyle()} flex flex-col justify-between h-44 md:h-48 shadow-2xl animate-ios relative overflow-hidden`}>
       <div className="flex flex-col gap-1">
         <div className="flex justify-between items-center w-full">
           <p className={`text-[10px] md:text-[11px] font-black uppercase tracking-widest ${type === 'balance' ? 'text-blue-500' : (type === 'income' ? 'text-emerald-500' : 'text-rose-500')}`}>{label}</p>
-          <div className="flex gap-1 p-1 bg-white/40 rounded-xl border border-white/60 overflow-x-auto scrollbar-hide">
+          <div className={`flex gap-1 p-1 ${type === 'balance' ? 'bg-blue-300/40' : 'bg-white/40'} rounded-xl border ${type === 'balance' ? 'border-blue-300/60' : 'border-white/60'} overflow-x-auto scrollbar-hide`}>
             {[PaymentMethod.CASH, PaymentMethod.BKASH, PaymentMethod.NAGAD, PaymentMethod.BANK].map(m => (
               <button 
                 key={m} 
                 onClick={() => setSelectedMethod(m as PaymentMethod)} 
-                className={`px-2.5 py-1 rounded-lg text-[8px] font-black tracking-tight transition-all flex-shrink-0 ${selectedMethod === m ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                className={`px-2.5 py-1 rounded-lg text-[8px] font-black tracking-tight transition-all flex-shrink-0 ${selectedMethod === m ? (type === 'balance' ? 'bg-blue-50 text-blue-900 shadow-sm' : 'bg-white text-slate-900 shadow-sm') : (type === 'balance' ? 'text-blue-700' : 'text-slate-400')}`}
               >
                 {m}
               </button>
@@ -59,7 +68,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, type, currencySymbol, transa
           </div>
         </div>
         <div className="mt-3">
-          <div onClick={toggleReveal} className={`balance-slider-bg type-${type} ${isRevealed ? 'active' : ''} cursor-pointer relative h-[28px] w-[110px] rounded-full bg-white/40 backdrop-blur-md border border-white/60 overflow-hidden shadow-sm`}>
+          <div onClick={toggleReveal} className={`balance-slider-bg type-${type} ${isRevealed ? 'active' : ''} cursor-pointer relative h-[28px] w-[110px] rounded-full ${type === 'balance' ? 'bg-blue-300/40' : 'bg-white/40'} backdrop-blur-md border ${type === 'balance' ? 'border-blue-300/60' : 'border-white/60'} overflow-hidden shadow-sm`}>
             <div className="balance-slider-text absolute w-full text-center text-[8px] font-extrabold uppercase tracking-widest top-1/2 -translate-y-1/2 pl-[22px] pointer-events-none transition-opacity opacity-60">
               {isRevealed ? 'REVEALED' : `TAP TO ${selectedMethod}`}
             </div>
